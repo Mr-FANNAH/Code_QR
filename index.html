@@ -72,15 +72,27 @@
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(234,59,21,0.7);
         }
-        #qrcode {
+        #qrcode-container {
             margin-top: 2rem;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 256px;
+        }
+        #qrcode {
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
         }
         #qrcode img {
             animation: fadeIn 1s ease;
+        }
+        #scan-me {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            border-radius: 0 0 10px 10px;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.9); }
@@ -112,7 +124,10 @@
         <input type="text" id="url-input" placeholder="Entrez l'URL">
         <button id="generate-btn">Générer QR Code</button>
         <button id="download-btn">Télécharger PNG</button>
-        <div id="qrcode"></div>
+        <div id="qrcode-container">
+            <div id="qrcode"></div>
+            <div id="scan-me" style="display: none;">  SCAN ME  </div>
+        </div>
         <h6>Developed by © Mr.FANNAH.2024</h6>
     </div>
     <script>
@@ -129,17 +144,20 @@
                     colorLight : "#ffffff"
                 });
                 document.getElementById('download-btn').style.display = 'inline-block';
+                document.getElementById('scan-me').style.display = 'block';
             }
         });
 
         document.getElementById('download-btn').addEventListener('click', function() {
             if (qrcode) {
-                const canvas = document.querySelector("#qrcode canvas");
-                const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-                const link = document.createElement('a');
-                link.download = 'qrcode.png';
-                link.href = image;
-                link.click();
+                const qrContainer = document.getElementById('qrcode-container');
+                html2canvas(qrContainer).then(canvas => {
+                    const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                    const link = document.createElement('a');
+                    link.download = 'qrcode_with_scan_me.png';
+                    link.href = image;
+                    link.click();
+                });
             }
         });
 
@@ -151,5 +169,6 @@
             glow.style.background = `radial-gradient(circle at ${x*100}% ${y*100}%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)`;
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
