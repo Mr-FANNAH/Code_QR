@@ -54,7 +54,7 @@
             outline: none;
             box-shadow: 0 0 15px rgba(255,255,255,0.5);
         }
-        #generate-btn {
+        #generate-btn, #download-btn {
             background: #ea3b15;
             color: #fff;
             border: none;
@@ -66,8 +66,9 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             font-family: 'Roboto', sans-serif;
+            margin: 0.5rem;
         }
-        #generate-btn:hover {
+        #generate-btn:hover, #download-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(234,59,21,0.7);
         }
@@ -99,6 +100,9 @@
             opacity: 0.7;
             font-weight: 300;
         }
+        #download-btn {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -107,21 +111,35 @@
         <h1>Créez Votre QR Code Gratuit</h1>
         <input type="text" id="url-input" placeholder="Entrez l'URL">
         <button id="generate-btn">Générer QR Code</button>
+        <button id="download-btn">Télécharger PNG</button>
         <div id="qrcode"></div>
         <h6>Developed by © Mr.FANNAH.2024</h6>
     </div>
     <script>
+        let qrcode = null;
         document.getElementById('generate-btn').addEventListener('click', function() {
             var url = document.getElementById('url-input').value;
             if (url) {
                 document.getElementById('qrcode').innerHTML = '';
-                new QRCode(document.getElementById('qrcode'), {
+                qrcode = new QRCode(document.getElementById('qrcode'), {
                     text: url,
                     width: 256,
                     height: 256,
                     colorDark : "#000000",
                     colorLight : "#ffffff"
                 });
+                document.getElementById('download-btn').style.display = 'inline-block';
+            }
+        });
+
+        document.getElementById('download-btn').addEventListener('click', function() {
+            if (qrcode) {
+                const canvas = document.querySelector("#qrcode canvas");
+                const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                const link = document.createElement('a');
+                link.download = 'qrcode.png';
+                link.href = image;
+                link.click();
             }
         });
 
