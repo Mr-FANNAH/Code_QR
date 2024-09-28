@@ -1,137 +1,274 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créez Votre QR Code Gratuit</title>
+    <title>Créez Votre QR Code</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        * {
             margin: 0;
-            background: linear-gradient(45deg, #ea3b15, #ff6347, #ea3b15);
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body,
+        html {
+            height: 100%;
+            background: #000;
             color: #fff;
             overflow: hidden;
         }
+        
+        #galaxy {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
         .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 3rem;
+            position: relative;
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
+            padding: 3rem;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.18);
             text-align: center;
-            transform: perspective(1000px) rotateX(5deg);
-            transition: transform 0.3s ease;
+            max-width: 600px;
+            width: 90%;
+            margin: 20px auto;
         }
-        .container:hover {
-            transform: perspective(1000px) rotateX(0deg);
-        }
+        
         h1 {
-            color: #fff;
-            font-size: 2.5em;
+            font-size: 2.2em;
             margin-bottom: 1.5rem;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            text-shadow: 0 0 10px rgba(163, 94, 251, 0.8);
             font-weight: 700;
         }
+        
         #url-input {
             width: 100%;
             padding: 1rem;
             margin-bottom: 1.5rem;
             border: none;
             border-radius: 50px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
             transition: all 0.3s ease;
-            font-family: 'Roboto', sans-serif;
         }
+        
         #url-input:focus {
             outline: none;
-            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+            box-shadow: 0 0 15px rgba(163, 94, 251, 0.8);
         }
-        #generate-btn, #download-btn {
-            background: #ea3b15;
+        
+        #generate-btn,
+        #download-btn {
+            background: linear-gradient(45deg, #ff7300, #ff0000);
             color: #fff;
             border: none;
             padding: 1rem 2rem;
             border-radius: 50px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-family: 'Roboto', sans-serif;
             margin: 0.5rem;
         }
-        #generate-btn:hover, #download-btn:hover {
+        
+        #generate-btn:hover,
+        #download-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(234,59,21,0.7);
+            box-shadow: 0 0 20px rgba(163, 94, 251, 0.8);
         }
+        
         #qrcode-container {
-            margin-top: 2rem;
-            display: flex;
+            margin-top: 1rem;
+            display: none;
             flex-direction: column;
             align-items: center;
-        }
-        #qrcode {
             background-color: white;
-            padding: 10px;
+            padding: 5px 5px 5px 5px;
             border-radius: 10px;
+            box-shadow: 0 0 20px rgba(163, 94, 251, 0.8);
         }
-        #qrcode img {
-            animation: fadeIn 1s ease;
+        
+        #qrcode {
+            margin-bottom: 10px;
         }
+        
         #scan-me {
             background-color: black;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 40px;
             font-weight: bold;
-            margin-top: 10px;
-            border-radius: 0 0 10px 10px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            font-size: 18px;
+            letter-spacing: 1px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .glow {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            pointer-events: none;
-            z-index: -1;
-        }
+        
         h6 {
             margin-top: 2rem;
             font-size: 0.8em;
             opacity: 0.7;
-            font-weight: 300;
+            font-weight: 400;
         }
-        #download-btn {
+        
+        #download-btn,
+        #size-select {
             display: none;
+        }
+        
+        #size-select {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ff4800;
+            border: none;
         }
     </style>
 </head>
+
 <body>
-    <div class="glow"></div>
+    <canvas id="galaxy"></canvas>
     <div class="container">
-        <h1>Créez Votre QR Code Gratuit</h1>
+        <h1>Créez Votre QR Code </h1>
         <input type="text" id="url-input" placeholder="Entrez l'URL">
         <button id="generate-btn">Générer QR Code</button>
+        <select id="size-select">
+            <option value="512">512x512</option>
+            <option value="1024">1024x1024</option>
+            <option value="2048">2048x2048</option>
+        </select>
         <button id="download-btn">Télécharger PNG</button>
         <div id="qrcode-container">
             <div id="qrcode"></div>
-            <div id="scan-me" style="display: none;">  SCAN ME  </div>
+            <div id="scan-me">SCAN ME</div>
         </div>
         <h6>Developed by © Mr.FANNAH.2024</h6>
     </div>
     <script>
+        const canvas = document.getElementById('galaxy');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let centerX = canvas.width / 2;
+        let centerY = canvas.height / 2;
+        let angle = 0;
+
+        // Étoiles
+        const stars = [];
+        const starCount = 2000;
+
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5,
+                speed: Math.random() * 0.05
+            });
+        }
+
+        // Météores
+        const meteors = [];
+        const meteorCount = 20;
+
+        function createMeteor() {
+            return {
+                x: Math.random() * canvas.width,
+                y: 0,
+                length: Math.random() * 80 + 20,
+                speed: Math.random() * 1 + 5,
+                thickness: Math.random() * 2 + 1,
+            };
+        }
+
+        for (let i = 0; i < meteorCount; i++) {
+            meteors.push(createMeteor());
+        }
+
+        function drawStars() {
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, ' + (0.5 + Math.random() * 0.5) + ')';
+                ctx.fill();
+
+                star.y += star.speed;
+                if (star.y > canvas.height) star.y = 0;
+            });
+        }
+
+        function drawMeteors() {
+            meteors.forEach(meteor => {
+                ctx.beginPath();
+                ctx.moveTo(meteor.x, meteor.y);
+                ctx.lineTo(meteor.x + meteor.length, meteor.y + meteor.length);
+                ctx.lineWidth = meteor.thickness;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.stroke();
+
+                meteor.x += meteor.speed;
+                meteor.y += meteor.speed;
+
+                if (meteor.x > canvas.width || meteor.y > canvas.height) {
+                    Object.assign(meteor, createMeteor());
+                }
+            });
+        }
+
+        function drawGalaxy() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawStars();
+            drawMeteors();
+
+            // Noyau galactique
+            let gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 200);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.2, 'rgba(255, 230, 200, 0.8)');
+            gradient.addColorStop(0.4, 'rgba(200, 150, 255, 0.6)');
+            gradient.addColorStop(1, 'rgba(100, 50, 255, 0)');
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 200, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Bras spiraux
+            for (let i = 0; i < 2; i++) {
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                for (let j = 0; j < 300; j++) {
+                    let r = j * 2;
+                    let a = angle + i * Math.PI + j * 0.02;
+                    let x = centerX + r * Math.cos(a);
+                    let y = centerY + r * Math.sin(a);
+                    ctx.lineTo(x, y);
+                }
+                ctx.strokeStyle = 'rgba(180, 100, 255, 0.1)';
+                ctx.lineWidth = 50;
+                ctx.stroke();
+            }
+
+            angle += 0.005;
+            requestAnimationFrame(drawGalaxy);
+        }
+
+        drawGalaxy();
+
+        // QR Code generator
         let qrcode = null;
+
         document.getElementById('generate-btn').addEventListener('click', function() {
             var url = document.getElementById('url-input').value;
             if (url) {
@@ -140,35 +277,41 @@
                     text: url,
                     width: 256,
                     height: 256,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff"
+                    colorDark: "#000000",
+                    colorLight: "#ffffff"
                 });
                 document.getElementById('download-btn').style.display = 'inline-block';
-                document.getElementById('scan-me').style.display = 'block';
+                document.getElementById('size-select').style.display = 'inline-block';
+                document.getElementById('qrcode-container').style.display = 'flex';
             }
         });
 
         document.getElementById('download-btn').addEventListener('click', function() {
             if (qrcode) {
+                const size = document.getElementById('size-select').value;
                 const qrContainer = document.getElementById('qrcode-container');
+
                 html2canvas(qrContainer).then(canvas => {
-                    const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+                    // Spécifier explicitement le format PNG
+                    const image = canvas.toDataURL("image/png");
                     const link = document.createElement('a');
-                    link.download = 'qrcode_with_scan_me.png';
+                    // Ajouter l'extension .png au nom du fichier
+                    link.download = `qrcode_with_scan_me_${size}x${size}.png`;
                     link.href = image;
                     link.click();
                 });
             }
         });
 
-        // Add subtle movement to the glow effect
-        document.addEventListener('mousemove', function(e) {
-            const glow = document.querySelector('.glow');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            glow.style.background = `radial-gradient(circle at ${x*100}% ${y*100}%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)`;
+        // Resize canvas on window resize
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            centerX = canvas.width / 2;
+            centerY = canvas.height / 2;
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
+
 </html>
